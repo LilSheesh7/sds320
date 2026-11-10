@@ -4,6 +4,8 @@ __pycache__/
 venv/
 .env
 .vscode/
+
 data/
 results/
+models/**/*.pth
 
