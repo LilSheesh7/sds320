@@ -58,13 +58,13 @@ conda env update -f environment.yml --prune
 ### Satellite images
 The images come from **Vantor's Open Data Program**, which provides pre- and post-disaster imagery. A (free) Vantor account is needed to download them. This project uses the **visual (RGB)** images. Multispectral and panchromatic images of the same area and dates are also available.
 
-The data can be found on Vantors Discovery page (https://xpress.maxar.com/) then under Vantors' Open Data Events under Kalehe DRC Flooding 2023 tag. Download the correct tiles with the correct Quad Key.
+The data can be found on Vantor's Discovery page (https://xpress.maxar.com/) then under Vantor's Open Data Events under Kalehe DRC Flooding 2023 tag. Download the correct tiles with the correct Quad Key.
 
 Place the downloaded files in `data/raw/raster/`:
 
 | File | Quad Key |Event |
-|---|---| ---
-| `10300100E57BC400-visual_pre_north.tif` | 300000303023 |pre-event |
+|---|---|---|
+| `10300100E57BC400-visual_pre_north.tif` | 300000303032 |pre-event |
 | `10300100E57BC400-visual_pre_south.tif` | 300000303210 |pre-event |
 | `1040010084614200-visual_post_north.tif` | 300000303032 |post-event |
 | `1040010084614200-visual_post_south.tif` | 300000303210 |post-event |
@@ -92,7 +92,7 @@ No reliable building dataset exists for this area (Google's building dataset has
 
 Training the model and running the predictions takes a long time. These steps are **skipped by default** and the saved results in `models/` and `results/` are used instead. 
 The trained model weights are too large for git and are attached to the
-[GitHub Release trained_model](github.com/LilSheesh7/sds320/releases/download/trained_model).
+[GitHub Release trained_model](https://github.com/LilSheesh7/sds320/releases/).
 The notebook downloads them automatically into `models/rgb/`. You can also
 download them by hand and place them there. 
 
@@ -112,7 +112,7 @@ RUN_PREDICTION_POST = False  # True → predict buildings on the post-event imag
 
 | Section | Step |
 |---|---|
-| 1. Set up | GDAL/PROJ paths, imports, switches, load pre-trained models |
+| 1. Set up | GDAL/PROJ paths, imports, switches, download the trained model |
 | 2. Data | load and merge the north/south tiles of the pre- and post-event images; load reference buildings |
 | 3. Data processing | clip rasters to the total AOI, training and validation AOI; split buildings into training and validation set |
 | 4. Train the model | rasterise labels, export 256 × 256 px tiles, train a Mask R-CNN instance segmentation model with `geoai.train_instance_segmentation_model()` (50 epochs) |
