@@ -1,0 +1,31 @@
+name: sds320
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+
+  # Geospatial core (GDAL/PROJ come with rasterio/geopandas from conda-forge)
+  - gdal
+  - rasterio
+  - geopandas
+  - shapely
+  - affine
+
+  # Deep learning / building detection
+  - geoai              # conda-forge name; on PyPI it is "geoai-py"
+
+  # Data handling and analysis
+  - numpy
+  - pandas
+  - scipy
+  - lazyslide       # segmentation metrics (precision, recall, F1, IoU, PQ)
+
+  # Visualisation and interactive maps
+  - matplotlib
+  - leafmap
+  - localtileserver    # needed by leafmap for add_raster()
+  - ipywidgets
+
+  # Notebook
+  - jupyterlab
+  - ipykernel
