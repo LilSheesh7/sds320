@@ -6,19 +6,6 @@ This project trains a deep-learning model to detect buildings on very high resol
 
 ---
 
-## Contents
-
-1. [Project structure](#project-structure)
-2. [Installation](#installation)
-3. [Data](#data)
-4. [Running the notebook](#running-the-notebook)
-5. [Workflow](#workflow)
-6. [Results](#results)
-7. [Limitations](#limitations)
-8. [References](#references)
-
----
-
 ## Project structure
 
 ```
@@ -32,13 +19,13 @@ SDS320/
 │       ├── merge_tifs.py
 │       └── raster_outline.py
 ├── data/
-│   ├── raw/raster/               # Vantor images (not included, see "Data")
+│   ├── raw/raster/               # Vantor images (need to be downloaded by the user manually)
 │   ├── processed/                # merged and clipped rasters, training/validation labels
-│   ├── training/rgb/             # image and label tiles for training
-│   └── validation/rgb/           # predictions on the validation area
-├── GIS/                          # hand-drawn layers from QGIS (buildings, AOIs, control points)
+│   ├── training/rgb/             # image and label tiles for training, (make new folder for new training)
+│   └── validation/rgb/           # predictions on the validation area, (make new folder for new validation)
+├── GIS/                          # layers from QGIS (buildings, AOIs, control points)
 ├── models/rgb/                   # trained model (best_model.pth, training_history.pth)
-└── results/                      # predictions, building status, threshold sensitivity
+└── results/                      # predictions, building status, threshold sensitivity, figures
 ```
 
 All paths in the notebook are relative (`../data/...`), so the notebook must be started from inside its own folder.
@@ -52,12 +39,6 @@ The project uses a conda environment (tested with Python 3.12 on Windows).
 ```bash
 conda env create -f environment.yml
 conda activate sds320
-```
-
-Register the environment as a Jupyter kernel (optional):
-
-```bash
-python -m ipykernel install --user --name sds320 --display-name "Python (sds320)"
 ```
 
 To update the environment after changing `environment.yml`:
@@ -77,14 +58,16 @@ conda env update -f environment.yml --prune
 ### Satellite images
 The images come from **Vantor's Open Data Program**, which provides pre- and post-disaster imagery. A (free) Vantor account is needed to download them. This project uses the **visual (RGB)** images. Multispectral and panchromatic images of the same area and dates are also available.
 
+The data can be found on Vantors Discovery page (https://xpress.maxar.com/) then under Vantors' Open Data Events under Kalehe DRC Flooding 2023 tag. Download the correct tiles with the correct Quad Key.
+
 Place the downloaded files in `data/raw/raster/`:
 
-| File | Event |
-|---|---|
-| `10300100E57BC400-visual_pre_north.tif` | pre-event |
-| `10300100E57BC400-visual_pre_south.tif` | pre-event |
-| `1040010084614200-visual_post_north.tif` | post-event |
-| `1040010084614200-visual_post_south.tif` | post-event |
+| File | Quad Key |Event |
+|---|---| ---
+| `10300100E57BC400-visual_pre_north.tif` | 300000303023 |pre-event |
+| `10300100E57BC400-visual_pre_south.tif` | 300000303210 |pre-event |
+| `1040010084614200-visual_post_north.tif` | 300000303032 |post-event |
+| `1040010084614200-visual_post_south.tif` | 300000303210 |post-event |
 
 ### Vector data (`GIS/`)
 No reliable building dataset exists for this area (Google's building dataset has low confidence here), so the reference buildings were **digitised by hand in QGIS**.
@@ -107,7 +90,11 @@ No reliable building dataset exists for this area (Google's building dataset has
 
 ### ⚠️ Switches for long-running steps
 
-Training the model and running the predictions takes a long time. These steps are **skipped by default** and the saved results in `models/` and `results/` are used instead.
+Training the model and running the predictions takes a long time. These steps are **skipped by default** and the saved results in `models/` and `results/` are used instead. 
+The trained model weights are too large for git and are attached to the
+[GitHub Release trained_model](github.com/LilSheesh7/sds320/releases/download/trained_model).
+The notebook downloads them automatically into `models/rgb/`. You can also
+download them by hand and place them there. 
 
 The switches are set in the configuration cell at the beginning of the notebook (section 1):
 
@@ -125,7 +112,7 @@ RUN_PREDICTION_POST = False  # True → predict buildings on the post-event imag
 
 | Section | Step |
 |---|---|
-| 1. Set up | GDAL/PROJ paths, imports, switches |
+| 1. Set up | GDAL/PROJ paths, imports, switches, load pre-trained models |
 | 2. Data | load and merge the north/south tiles of the pre- and post-event images; load reference buildings |
 | 3. Data processing | clip rasters to the total AOI, training and validation AOI; split buildings into training and validation set |
 | 4. Train the model | rasterise labels, export 256 × 256 px tiles, train a Mask R-CNN instance segmentation model with `geoai.train_instance_segmentation_model()` (50 epochs) |
