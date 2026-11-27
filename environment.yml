@@ -11,18 +11,21 @@ dependencies:
   - shapely
   - affine
 
-  # Deep learning / building detection
+  # Deep learning / building detection (installs PyTorch as a dependency)
   - geoai              # conda-forge name; on PyPI it is "geoai-py"
 
   # Data handling and analysis
   - numpy
   - pandas
   - scipy
-  - lazyslide       # segmentation metrics (precision, recall, F1, IoU, PQ)
+
+  # Model evaluation
+  - lazyslide          # segmentation metrics (precision, recall, F1, IoU, PQ)
 
   # Visualisation and interactive maps
   - matplotlib
   - leafmap
+  - ipyleaflet         # backend for leafmap.leafmap (interactive split maps)
   - localtileserver    # needed by leafmap for add_raster()
   - ipywidgets
 
